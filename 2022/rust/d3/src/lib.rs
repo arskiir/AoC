@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn first(input: &str) -> u32 {
+pub fn part1(input: &str) -> u32 {
     let mut result: u32 = 0;
 
     input.lines().for_each(|racksack| {
@@ -23,7 +23,7 @@ pub fn first(input: &str) -> u32 {
     result
 }
 
-pub fn second(input: &str) -> u32 {
+pub fn part2(input: &str) -> u32 {
     let mut result: u32 = 0;
 
     let mut lower_window: usize = 0;
@@ -71,27 +71,27 @@ CrZsJsPPZsGzwwsLwLmpwMDw";
 
     #[test]
     fn example_works() {
-        let result = first(EXAMPLE_INPUT);
+        let result = part1(EXAMPLE_INPUT);
         assert_eq!(result, 157);
     }
 
     #[test]
-    fn first_works() {
+    fn part1_works() {
         let input = fs::read_to_string("./input.txt").unwrap();
-        let result = first(&input);
+        let result = part1(&input);
         assert_eq!(result, 8233);
     }
 
     #[test]
     fn second_example_works() {
-        let result = second(EXAMPLE_INPUT);
+        let result = part2(EXAMPLE_INPUT);
         assert_eq!(result, 70);
     }
 
     #[test]
-    fn second_works() {
+    fn part2_works() {
         let input = fs::read_to_string("./input.txt").unwrap();
-        let result = second(&input);
+        let result = part2(&input);
         assert_eq!(result, 2821);
     }
 }

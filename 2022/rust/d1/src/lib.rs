@@ -4,7 +4,7 @@ fn get_input(path: &str) -> String {
     fs::read_to_string(path).expect("Error reading input.txt")
 }
 
-pub fn first_half(path: &str) -> u32 {
+pub fn part1(path: &str) -> u32 {
     let input = get_input(path);
     input
         .split("\r\n\r\n")
@@ -18,7 +18,7 @@ pub fn first_half(path: &str) -> u32 {
         .unwrap()
 }
 
-pub fn second_half(path: &str) -> u32 {
+pub fn part2(path: &str) -> u32 {
     let input = get_input(path);
     let mut result = input
         .split("\r\n\r\n")
@@ -39,19 +39,19 @@ mod tests {
 
     #[test]
     fn example_works() {
-        let result = first_half("./example_input.txt");
+        let result = part1("./example_input.txt");
         assert_eq!(24000, result);
     }
 
     #[test]
-    fn first_half_works() {
-        let result = first_half("./input.txt");
+    fn part1_works() {
+        let result = part1("./input.txt");
         assert_eq!(65912, result);
     }
 
     #[test]
-    fn second_half_works() {
-        let result = second_half("./input.txt");
+    fn part2_works() {
+        let result = part2("./input.txt");
         assert_eq!(195625, result);
     }
 }

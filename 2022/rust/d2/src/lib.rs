@@ -1,6 +1,6 @@
 use std::fs;
 
-pub fn first() -> u32 {
+pub fn part1() -> u32 {
     let mut score: u32 = 0;
 
     fs::read_to_string("./input.txt")
@@ -42,7 +42,7 @@ pub fn first() -> u32 {
     score
 }
 
-pub fn second() -> u32 {
+pub fn part2() -> u32 {
     let mut score: u32 = 0;
 
     fs::read_to_string("./input.txt")
@@ -89,14 +89,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn first_works() {
-        let result = first();
+    fn part1_works() {
+        let result = part1();
         assert_eq!(result, 17189);
     }
 
     #[test]
-    fn second_works() {
-        let result = second();
+    fn part2_works() {
+        let result = part2();
         assert_eq!(result, 13490);
     }
 }
