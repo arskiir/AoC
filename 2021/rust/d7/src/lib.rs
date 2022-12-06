@@ -12,8 +12,9 @@ pub fn part1(input: &str) -> u32 {
 }
 
 fn increasing_fuel(from: i32, to: i32) -> u32 {
-    let range = if from <= to { from..=to } else { to..=from };
-    range.enumerate().map(|(i, _)| i as u32).sum()
+    let n = from.abs_diff(to) + 1;
+    // sum of arithmetic sequence
+    ((n as f32) / 2f32 * (n as f32 - 1f32)) as u32
 }
 
 pub fn part2(input: &str) -> u32 {
@@ -47,7 +48,7 @@ mod tests {
     fn part1_works() {
         let input = fs::read_to_string("./input.txt").unwrap();
         let result = part1(&input);
-        assert_eq!(result, 37);
+        assert_eq!(result, 344735);
     }
 
     #[test]
