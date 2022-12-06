@@ -1,23 +1,20 @@
-pub fn solution(input: &str, days: u32) -> usize {
-    let mut fish: Vec<usize> = input
-        .split(',')
-        .map(|n| n.parse::<usize>().unwrap())
-        .collect();
+use std::collections::VecDeque;
 
-    for _ in 0..days {
-        let mut new_fish = vec![];
-        for fish_days in fish.iter_mut() {
-            if *fish_days == 0 {
-                *fish_days = 6;
-                new_fish.push(8usize);
-            } else {
-                *fish_days -= 1;
-            }
-        }
-        fish.append(&mut new_fish);
+pub fn solution(input: &str, days: u32) -> u64 {
+    let mut state: VecDeque<u64> = VecDeque::from_iter([0; 9]);
+
+    // set initial state
+    for f in input.split(',').map(|n| n.parse::<usize>().unwrap()) {
+        state[f] += 1;
     }
 
-    fish.len()
+    for _ in 0..days {
+        let new_born_amount = state.pop_front().unwrap();
+        state.push_back(new_born_amount);
+        state[6] += new_born_amount;
+    }
+
+    state.iter().sum()
 }
 
 #[cfg(test)]
@@ -39,6 +36,6 @@ mod tests {
     #[test]
     fn part2_works() {
         let result = solution("4,2,4,1,5,1,2,2,4,1,1,2,2,2,4,4,1,2,1,1,4,1,2,1,2,2,2,2,5,2,2,3,1,4,4,4,1,2,3,4,4,5,4,3,5,1,2,5,1,1,5,5,1,4,4,5,1,3,1,4,5,5,5,4,1,2,3,4,2,1,2,1,2,2,1,5,5,1,1,1,1,5,2,2,2,4,2,4,2,4,2,1,2,1,2,4,2,4,1,3,5,5,2,4,4,2,2,2,2,3,3,2,1,1,1,1,4,3,2,5,4,3,5,3,1,5,5,2,4,1,1,2,1,3,5,1,5,3,1,3,1,4,5,1,1,3,2,1,1,1,5,2,1,2,4,2,3,3,2,3,5,1,5,1,2,1,5,2,4,1,2,4,4,1,5,1,1,5,2,2,5,5,3,1,2,2,1,1,4,1,5,4,5,5,2,2,1,1,2,5,4,3,2,2,5,4,2,5,4,4,2,3,1,1,1,5,5,4,5,3,2,5,3,4,5,1,4,1,1,3,4,4,1,1,5,1,4,1,2,1,4,1,1,3,1,5,2,5,1,5,2,5,2,5,4,1,1,4,4,2,3,1,5,2,5,1,5,2,1,1,1,2,1,1,1,4,4,5,4,4,1,4,2,2,2,5,3,2,4,4,5,5,1,1,1,1,3,1,2,1", 256);
-        assert_eq!(result, 5934);
+        assert_eq!(result, 1609314870967);
     }
 }
