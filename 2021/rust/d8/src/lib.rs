@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 
 pub fn part1(input: &str) -> u32 {
     let numbers: BTreeSet<usize> = [2, 4, 3, 7].into_iter().collect();
@@ -12,6 +12,39 @@ pub fn part1(input: &str) -> u32 {
                 .split_whitespace()
                 .map(|d| numbers.contains(&d.len()) as u32)
                 .sum::<u32>()
+        })
+        .sum()
+}
+
+pub fn part2(input: &str) -> u32 {
+    let lookup: HashMap<BTreeSet<char>, char> = HashMap::from([
+        (BTreeSet::from(['a', 'b']), '1'),
+        (BTreeSet::from(['a', 'c', 'd', 'f', 'g']), '2'),
+        (BTreeSet::from(['a', 'b', 'c', 'd', 'f']), '3'),
+        (BTreeSet::from(['a', 'b', 'e', 'f']), '4'),
+        (BTreeSet::from(['b', 'c', 'd', 'e', 'f']), '5'),
+        (BTreeSet::from(['b', 'c', 'd', 'e', 'f', 'g']), '6'),
+        (BTreeSet::from(['a', 'b', 'd']), '7'),
+        (BTreeSet::from(['a', 'c', 'e', 'd', 'g', 'f', 'b']), '8'),
+        (BTreeSet::from(['c', 'e', 'f', 'a', 'b', 'd']), '9'),
+    ]);
+
+    input
+        .lines()
+        .map(|entry| {
+            entry
+                .split(" | ")
+                .last()
+                .unwrap()
+                .split_whitespace()
+                .map(|digit| {
+                    dbg!(digit);
+                    0;
+                    lookup.get(&BTreeSet::from_iter(digit.chars())).unwrap()
+                })
+                .collect::<String>()
+                .parse::<u32>()
+                .unwrap()
         })
         .sum()
 }
@@ -45,5 +78,10 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         let input = fs::read_to_string("./input.txt").unwrap();
         let result = part1(&input);
         assert_eq!(result, 342);
+    }
+
+    #[test]
+    fn example_part2_works() {
+        assert_eq!(part2(EXAMPLE), 61229);
     }
 }
