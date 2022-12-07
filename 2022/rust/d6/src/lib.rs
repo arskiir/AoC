@@ -6,7 +6,7 @@ pub fn better_solution(input: &str, window_size: usize) -> usize {
         .collect::<Vec<_>>()
         .windows(window_size)
         .enumerate()
-        .find(|(_, window)| window.iter().collect::<BTreeSet<_>>().len() == window.iter().len())
+        .find(|(_, window)| window.iter().collect::<BTreeSet<_>>().len() == window_size)
         .unwrap()
         .0
         + window_size
