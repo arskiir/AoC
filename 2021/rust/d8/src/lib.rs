@@ -17,36 +17,15 @@ pub fn part1(input: &str) -> u32 {
 }
 
 pub fn part2(input: &str) -> u32 {
-    let lookup: HashMap<BTreeSet<char>, char> = HashMap::from([
-        (BTreeSet::from(['a', 'b']), '1'),
-        (BTreeSet::from(['a', 'c', 'd', 'f', 'g']), '2'),
-        (BTreeSet::from(['a', 'b', 'c', 'd', 'f']), '3'),
-        (BTreeSet::from(['a', 'b', 'e', 'f']), '4'),
-        (BTreeSet::from(['b', 'c', 'd', 'e', 'f']), '5'),
-        (BTreeSet::from(['b', 'c', 'd', 'e', 'f', 'g']), '6'),
-        (BTreeSet::from(['a', 'b', 'd']), '7'),
-        (BTreeSet::from(['a', 'c', 'e', 'd', 'g', 'f', 'b']), '8'),
-        (BTreeSet::from(['c', 'e', 'f', 'a', 'b', 'd']), '9'),
-    ]);
+    let set4: BTreeSet<char> = BTreeSet::from(['e', 'a', 'f', 'b']);
+    let set0: BTreeSet<char> = BTreeSet::from(['c', 'a', 'g', 'e', 'd', 'b']);
+    let set6: BTreeSet<char> = BTreeSet::from(['c', 'd', 'f', 'g', 'e', 'b']);
+    let set9: BTreeSet<char> = BTreeSet::from(['c', 'e', 'f', 'a', 'b', 'd']);
+    dbg!(set4.intersection(&set0).count());
+    dbg!(set4.intersection(&set6).count());
+    dbg!(set4.intersection(&set9).count());
 
-    input
-        .lines()
-        .map(|entry| {
-            entry
-                .split(" | ")
-                .last()
-                .unwrap()
-                .split_whitespace()
-                .map(|digit| {
-                    dbg!(digit);
-                    0;
-                    lookup.get(&BTreeSet::from_iter(digit.chars())).unwrap()
-                })
-                .collect::<String>()
-                .parse::<u32>()
-                .unwrap()
-        })
-        .sum()
+    32
 }
 
 #[cfg(test)]
