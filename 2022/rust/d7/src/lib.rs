@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn part1(input: &str) -> u32 {
+fn get_dirs_acc(input: &str) -> HashMap<Vec<String>, u32> {
     fn process_cd(command: &Vec<&str>, breadcrumb: &mut Vec<String>) {
         let dir_name = *command.last().unwrap();
         if dir_name == "/" {
@@ -65,7 +65,12 @@ pub fn part1(input: &str) -> u32 {
         }
     }
 
-    dirs.iter()
+    dirs
+}
+
+pub fn part1(input: &str) -> u32 {
+    get_dirs_acc(input)
+        .iter()
         .map(
             |(_, acc_size)| {
                 if *acc_size <= 100000 {
@@ -76,6 +81,22 @@ pub fn part1(input: &str) -> u32 {
             },
         )
         .sum()
+}
+
+pub fn part2(input: &str) -> u32 {
+    let dirs = get_dirs_acc(input);
+    let required_space = 30000000 - (70000000 - *dirs.get(&vec!["/".to_string()]).unwrap() as i32);
+    *dirs
+        .iter()
+        .filter_map(|(_, acc_size)| {
+            if *acc_size >= required_space as u32 {
+                Some(acc_size)
+            } else {
+                None
+            }
+        })
+        .min()
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -119,5 +140,18 @@ $ ls
         let input = fs::read_to_string("./input.txt").unwrap();
         let result = part1(&input);
         assert_eq!(result, 1908462);
+    }
+
+    #[test]
+    fn ex_part2_works() {
+        let result = part2(EXAMPLE);
+        assert_eq!(result, 24933642);
+    }
+
+    #[test]
+    fn part2_works() {
+        let input = fs::read_to_string("./input.txt").unwrap();
+        let result = part2(&input);
+        assert_eq!(result, 3979145);
     }
 }
