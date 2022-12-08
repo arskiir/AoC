@@ -1,13 +1,6 @@
-use std::collections::{BTreeSet, HashMap};
+use std::collections::HashMap;
 
-/// This overflows the call stack but is correct.
-pub fn poor_over_engineered_part1(input: &str) -> u32 {
-    #[derive(Debug)]
-    pub struct Dir {
-        size_accumulated: u32,
-        dirs: BTreeSet<String>,
-    }
-
+pub fn part1(input: &str) -> u32 {
     fn process_cd(command: &Vec<&str>, breadcrumb: &mut Vec<String>) {
         let dir_name = *command.last().unwrap();
         if dir_name == "/" {
@@ -26,45 +19,23 @@ pub fn poor_over_engineered_part1(input: &str) -> u32 {
 
     fn process_ls(
         ls_outputs: &[Vec<&str>],
-        system: &mut HashMap<String, Dir>,
+        dirs: &mut HashMap<Vec<String>, u32>,
         breadcrumb: &mut Vec<String>,
     ) {
-        let current_dir = breadcrumb.last().unwrap();
-        if !system.contains_key(current_dir) {
-            system.insert(
-                current_dir.to_string(),
-                Dir {
-                    dirs: BTreeSet::new(),
-                    size_accumulated: 0,
-                },
-            );
-        }
-
         for output in ls_outputs {
-            let dir_ref = system.get_mut(current_dir).unwrap();
             if let Ok(file_size) = output[0].parse::<u32>() {
-                dir_ref.size_accumulated += file_size;
+                (1..=breadcrumb.len()).for_each(|window_size| {
+                    let dir_name = breadcrumb.windows(window_size).next().unwrap();
+                    dirs.entry(dir_name.to_vec())
+                        .and_modify(|acc_size| *acc_size += file_size)
+                        .or_insert(file_size);
+                });
                 continue;
             }
-            dir_ref.dirs.insert(output[1].to_string());
         }
     }
 
-    fn size_deep(dir: &Dir, system: &HashMap<String, Dir>) -> u32 {
-        if dir.dirs.len() == 0 {
-            return dir.size_accumulated;
-        }
-        dir.dirs
-            .iter()
-            .map(|dir_name| {
-                let dir = system.get(dir_name).unwrap();
-                size_deep(dir, system)
-            })
-            .sum::<u32>()
-            + dir.size_accumulated
-    }
-
-    let mut system: HashMap<String, Dir> = HashMap::new();
+    let mut dirs: HashMap<Vec<String>, u32> = HashMap::new();
     let mut breadcrumb: Vec<String> = vec![];
 
     let mut lines_it = input
@@ -84,7 +55,7 @@ pub fn poor_over_engineered_part1(input: &str) -> u32 {
                     ls_outputs.push(line);
                 }
             }
-            process_ls(&ls_outputs, &mut system, &mut breadcrumb);
+            process_ls(&ls_outputs, &mut dirs, &mut breadcrumb);
             if let Some(command) = cd_command_buf {
                 process_cd(&command, &mut breadcrumb);
             }
@@ -94,20 +65,17 @@ pub fn poor_over_engineered_part1(input: &str) -> u32 {
         }
     }
 
-    system
-        .iter()
-        .map(|(_, dir)| {
-            if dir.size_accumulated <= 100000 {
-                size_deep(dir, &system)
-            } else {
-                0
-            }
-        })
+    dirs.iter()
+        .map(
+            |(_, acc_size)| {
+                if *acc_size <= 100000 {
+                    *acc_size
+                } else {
+                    0
+                }
+            },
+        )
         .sum()
-}
-
-pub fn part1(input: &str) -> u32 {
-    32
 }
 
 #[cfg(test)]
@@ -142,7 +110,7 @@ $ ls
 
     #[test]
     fn ex_part1_works() {
-        let result = poor_over_engineered_part1(EXAMPLE);
+        let result = part1(EXAMPLE);
         assert_eq!(result, 95437);
     }
 
@@ -150,6 +118,6 @@ $ ls
     fn part1_works() {
         let input = fs::read_to_string("./input.txt").unwrap();
         let result = part1(&input);
-        assert_eq!(result, 95437);
+        assert_eq!(result, 1908462);
     }
 }
