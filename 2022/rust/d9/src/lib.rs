@@ -109,23 +109,17 @@ pub fn part2(input: &str) -> usize {
             head.mv(&mv.dir);
             let new_head_pos = head.current_pos;
 
-            let mut prev_tail_before_pos = tails[0].current_pos;
-            let mut new_tail_before_pos: Option<(i32, i32)> = None;
-            for (i, tail) in tails.iter_mut().enumerate() {
-                if i == 0 {
-                    tail.mv(&new_head_pos, prev_head_pos);
-                } else {
-                    let prev_pos = tail.current_pos;
-                    tail.mv(&new_tail_before_pos.unwrap(), prev_tail_before_pos);
-                    prev_tail_before_pos = prev_pos;
-                }
-                new_tail_before_pos = Some(tail.current_pos);
-                // dbg!(prev_tail_before_pos);
-                // dbg!(&new_tail_before_pos);
+            let mut prev = prev_head_pos;
+            let mut new = new_head_pos;
+
+            for tail in tails.iter_mut() {
+                let prev_tail = tail.current_pos;
+                tail.mv(&new, prev);
+                prev = prev_tail;
+                new = tail.current_pos;
             }
+
             pos_tail_visited.insert(tails.last().unwrap().current_pos);
-            dbg!(&head);
-            dbg!(&tails);
         }
 
         // dbg!(&head);
@@ -159,16 +153,17 @@ D 3
 R 17
 D 10
 L 25
-U 20
-";
+U 20";
 
     #[test]
+    #[ignore]
     fn ex_part1_works() {
         let result = part1(EXAMPLE);
         assert_eq!(result, 13);
     }
 
     #[test]
+    #[ignore]
     fn part1_works() {
         let input = fs::read_to_string("./input.txt").unwrap();
         let result = part1(&input);
@@ -179,5 +174,13 @@ U 20
     fn ex_part2_works() {
         let result = part2(EXAMPLE2);
         assert_eq!(result, 36);
+    }
+
+    #[test]
+    #[ignore]
+    fn part2_works() {
+        let input = fs::read_to_string("./input.txt").unwrap();
+        let result = part2(&input);
+        assert_eq!(result, 5883);
     }
 }
