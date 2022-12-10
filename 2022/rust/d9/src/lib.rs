@@ -60,7 +60,7 @@ impl Tail {
         }
     }
 
-    pub fn mv(&mut self, new_head_pos: &(i32, i32), prev_head_pos: (i32, i32)) {
+    pub fn mv(&mut self, new_head_pos: &(i32, i32)) {
         let x_diff_abs = new_head_pos.0.abs_diff(self.current_pos.0);
         let y_diff_abs = new_head_pos.1.abs_diff(self.current_pos.1);
 
@@ -73,7 +73,35 @@ impl Tail {
             return;
         }
 
-        self.current_pos = prev_head_pos;
+        // go up or down
+        if x_diff_abs == 0 {
+            self.current_pos.1 += if new_head_pos.1 - self.current_pos.1 > 0 {
+                1
+            } else {
+                -1
+            };
+            return;
+        }
+        // go left or right
+        if y_diff_abs == 0 {
+            self.current_pos.0 += if new_head_pos.0 - self.current_pos.0 > 0 {
+                1
+            } else {
+                -1
+            };
+            return;
+        }
+        // go diagonally
+        self.current_pos.0 += if new_head_pos.0 - self.current_pos.0 > 0 {
+            1
+        } else {
+            -1
+        };
+        self.current_pos.1 += if new_head_pos.1 - self.current_pos.1 > 0 {
+            1
+        } else {
+            -1
+        };
     }
 }
 
@@ -86,9 +114,8 @@ pub fn part1(input: &str) -> usize {
 
     for mv in parse_moves(input) {
         for _ in 0..mv.amount {
-            let prev_head_pos = head.current_pos;
             head.mv(&mv.dir);
-            tail.mv(&head.current_pos, prev_head_pos);
+            tail.mv(&head.current_pos);
             pos_tail_visited.insert(tail.current_pos);
         }
     }
@@ -105,27 +132,18 @@ pub fn part2(input: &str) -> usize {
 
     for mv in parse_moves(input) {
         for _ in 0..mv.amount {
-            let prev_head_pos = head.current_pos;
             head.mv(&mv.dir);
             let new_head_pos = head.current_pos;
 
-            let mut prev = prev_head_pos;
             let mut new = new_head_pos;
 
             for tail in tails.iter_mut() {
-                let prev_tail = tail.current_pos;
-                tail.mv(&new, prev);
-                prev = prev_tail;
+                tail.mv(&new);
                 new = tail.current_pos;
             }
 
             pos_tail_visited.insert(tails.last().unwrap().current_pos);
         }
-
-        // dbg!(&head);
-        // for tail in tails.iter() {
-        // dbg!(tail);
-        // }
     }
 
     pos_tail_visited.len()
@@ -156,14 +174,12 @@ L 25
 U 20";
 
     #[test]
-    #[ignore]
     fn ex_part1_works() {
         let result = part1(EXAMPLE);
         assert_eq!(result, 13);
     }
 
     #[test]
-    #[ignore]
     fn part1_works() {
         let input = fs::read_to_string("./input.txt").unwrap();
         let result = part1(&input);
@@ -177,10 +193,9 @@ U 20";
     }
 
     #[test]
-    #[ignore]
     fn part2_works() {
         let input = fs::read_to_string("./input.txt").unwrap();
         let result = part2(&input);
-        assert_eq!(result, 5883);
+        assert_eq!(result, 2367);
     }
 }
