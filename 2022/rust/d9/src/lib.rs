@@ -66,8 +66,8 @@ impl Tail {
 
         // overlap or still touching, do not move
         if self.current_pos == *new_head_pos // overlap
-            || (x_diff_abs == 1 && self.current_pos.1.abs_diff(new_head_pos.1) == 0 /* touching horizontally */)
-            || (y_diff_abs == 1 && self.current_pos.0.abs_diff(new_head_pos.0) == 0 /* touching vertically */)
+            || (x_diff_abs == 1 && y_diff_abs == 0 /* touching horizontally */)
+            || (y_diff_abs == 1 && x_diff_abs == 0 /* touching vertically */)
             || (x_diff_abs == 1 && y_diff_abs == 1 /* touching diagonally */)
         {
             return;
