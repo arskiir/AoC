@@ -1,45 +1,64 @@
 // https://adventofcode.com/2024/day/2
 
 fn main() {
-    // p1();
+    p1();
     p2();
+}
+
+fn is_report_safe(levels: &[i32]) -> bool {
+    let mut initial_direction_increasing: Option<bool> = None;
+    let mut last_level = levels[0];
+
+    for i in 1..levels.len() {
+        let current_level = levels[i];
+        let diff = current_level - last_level;
+
+        // Rule 2: Any two adjacent levels differ by at least one and at most three.
+        if diff == 0 || diff.abs() > 3 {
+            return false;
+        }
+
+        let current_direction_increasing = diff > 0;
+
+        if let Some(expected_direction) = initial_direction_increasing {
+            // Rule 1: The levels are either all increasing or all decreasing.
+            if current_direction_increasing != expected_direction {
+                return false;
+            }
+        } else {
+            initial_direction_increasing = Some(current_direction_increasing);
+        }
+        last_level = current_level;
+    }
+    true
 }
 
 fn p2() {
     let mut p2 = 0;
 
-    for line in INPUT.split("\n") {
-        let mut safe = true;
-        let mut last = None;
-        let mut inc = None;
+    for line in INPUT.trim().lines() {
+        let original_levels: Vec<i32> = line
+            .split_whitespace()
+            .map(|s| s.parse().unwrap())
+            .collect();
 
-        // TODO
-        let mut tolerance_used = false;
-
-        for current in line.split_whitespace().map(|t| t.parse::<i32>().unwrap()) {
-            if let Some(last) = last {
-                let diff: i32 = current - last;
-                let increasing_now = diff > 0;
-
-                if diff == 0 || diff.abs() > 3 {
-                    safe = false;
-                    break;
-                }
-
-                if let Some(inc) = inc {
-                    if inc != increasing_now {
-                        safe = false;
-                        break;
-                    }
-                } else {
-                    inc = Some(increasing_now);
-                }
-            }
-
-            last = Some(current);
+        if is_report_safe(&original_levels) {
+            p2 += 1;
+            continue;
         }
 
-        if safe {
+        let mut made_safe_by_dampener = false;
+        for i in 0..original_levels.len() {
+            let mut temp_levels = original_levels.clone();
+            temp_levels.remove(i);
+
+            if is_report_safe(&temp_levels) {
+                made_safe_by_dampener = true;
+                break;
+            }
+        }
+
+        if made_safe_by_dampener {
             p2 += 1;
         }
     }
